@@ -4,8 +4,16 @@
 #include <pthread.h>
 
 
-void *producer( void *arg);
+//functions
+void *producer(void *arg);
 void *consumer(void *arg);
+
+//global variables
+int a = 0;
+int b = 0;
+
+
+
 
 //main function
 int main(int argc, char **argv) {
@@ -44,28 +52,59 @@ int main(int argc, char **argv) {
         
     }
     
+    
+    //make sure that the program doesn't quit until all the threads have done their jobs
+    for(int i=0; i<numThreads; i++) {
+        pthread_join(threads[i],NULL);
+    }
+    
 }
 
 
 
     //producer method to be run by the thread
-    void *producer( void *arg) {
+    void *producer(void *arg) {
         
         //get the thread id
         int t_id = (int)(long)arg;
         
         printf("Producer %d launched... \n",t_id);
+       
+       
+       /** 
+        //add 100 times
+        int reps = 0;
+        while(reps<100) {
+            
+            //add 1 to A & 3 to B
+            a++;
+            b+=3;
+        }
+        
+        **/
     }
     
     
     
     //producer method to be run by the thread
-    void *consumer( void *arg) {
+    void *consumer(void *arg) {
         
         //get the thread id
         int t_id = (int)(long)arg;
-        
         printf("Consumer %d launched... \n",t_id);
+        
+        
+        /**
+        //add 100 times
+        int reps = 0;
+        while(reps<100) {
+            
+            //add 3 to B and 1 to A
+            b+=3;
+            a++;
+        }
+        
+        **/
     }
 
 
