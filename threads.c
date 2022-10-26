@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
 
 
 #define INPUT_SIZE 20
@@ -94,6 +95,7 @@ int main(int argc, char **argv) {
             b+=3;
             
             //sleep for a random amount of time (btwn 0-100 micro-seconds)
+            usleep(rand() % (100 + 1));
             
             reps++;
         }
@@ -121,6 +123,8 @@ int main(int argc, char **argv) {
             a++;
             
             //sleep for a random amount of time (btwn 0-100 micro-seconds)
+            usleep(rand() % (100 + 1));
+            
             reps++;
         }
         
