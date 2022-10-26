@@ -4,13 +4,16 @@
 #include <pthread.h>
 
 
+#define INPUT_SIZE 20
+
 //functions
-void *producer(void *arg);
-void *consumer(void *arg);
+void *startProducer(void *arg);
+void *startConsumer(void *arg);
 
 //global variables
 int a = 0;
 int b = 0;
+char input[INPUT_SIZE];
 
 
 
@@ -18,12 +21,18 @@ int b = 0;
 //main function
 int main(int argc, char **argv) {
     
+    
+    //Read in a line using fgets, don't forget to trim the new line at the end
+    printf("How many threads?  ");
+    fgets(input, INPUT_SIZE, stdin); 
+    int numThreads = atoi(input);
+    
+    
     //array of thread structs to act as headers
     pthread_t *threads;
-    int numThreads = 4;
 
     //start
-    printf("Launching 4 threads... \n");
+    printf("Launching %d threads... \n\n",numThreads);
     
     //create structs and put on the heap
     threads = (pthread_t*) calloc(numThreads,sizeof(pthread_t));
@@ -38,14 +47,14 @@ int main(int argc, char **argv) {
         if(i%2 == 0) { //producer
             
             //launch the thread
-            if(pthread_create(&threads[i],NULL,&producer,(void *)thread_id) != 0) {
+            if(pthread_create(&threads[i],NULL,&startProducer,(void *)thread_id) != 0) {
                 perror("Error");
             }
             
         } else { //consumer
         
             //launch the thread
-            if(pthread_create(&threads[i],NULL,&consumer,(void *)thread_id) != 0) {
+            if(pthread_create(&threads[i],NULL,&startConsumer,(void *)thread_id) != 0) {
                 perror("Error");
             }
         }
@@ -58,12 +67,16 @@ int main(int argc, char **argv) {
         pthread_join(threads[i],NULL);
     }
     
+    
+    //print out the sums
+    printf("A: %d  \n",a);
+    printf("B: %d  \n",b);
 }
 
 
 
     //producer method to be run by the thread
-    void *producer(void *arg) {
+    void *startProducer(void *arg) {
         
         //get the thread id
         int t_id = (int)(long)arg;
@@ -71,7 +84,7 @@ int main(int argc, char **argv) {
         printf("Producer %d launched... \n",t_id);
        
        
-       /** 
+       
         //add 100 times
         int reps = 0;
         while(reps<100) {
@@ -79,22 +92,26 @@ int main(int argc, char **argv) {
             //add 1 to A & 3 to B
             a++;
             b+=3;
+            
+            //sleep for a random amount of time (btwn 0-100 micro-seconds)
+            
+            reps++;
         }
         
-        **/
+        
     }
     
     
     
     //producer method to be run by the thread
-    void *consumer(void *arg) {
+    void *startConsumer(void *arg) {
         
         //get the thread id
         int t_id = (int)(long)arg;
         printf("Consumer %d launched... \n",t_id);
         
         
-        /**
+        
         //add 100 times
         int reps = 0;
         while(reps<100) {
@@ -102,9 +119,12 @@ int main(int argc, char **argv) {
             //add 3 to B and 1 to A
             b+=3;
             a++;
+            
+            //sleep for a random amount of time (btwn 0-100 micro-seconds)
+            reps++;
         }
         
-        **/
+        
     }
 
 
