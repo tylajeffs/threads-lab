@@ -84,6 +84,8 @@ int main(int argc, char **argv) {
     //print out the sums
     printf("A: %d  \n",a);
     printf("B: %d  \n",b);
+    
+    free(threads);
 }
 
 
