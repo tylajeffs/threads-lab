@@ -3,6 +3,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <semaphore.h>
 
 
 #define INPUT_SIZE 20
@@ -15,7 +16,8 @@ void *startConsumer(void *arg);
 int a = 0;
 int b = 0;
 char input[INPUT_SIZE];
-
+sem_t a_lock;
+sem_t b_lock;
 
 
 
@@ -37,6 +39,16 @@ int main(int argc, char **argv) {
     
     //create structs and put on the heap
     threads = (pthread_t*) calloc(numThreads,sizeof(pthread_t));
+    
+    //initialize semaphores
+    if(sem_init(&a_lock,0,1) < 0) {
+        perror("Error initializing a_lock");
+    }
+    if(sem_init(&b_lock,0,1) < 0) {
+        perror("Error initializing b_lock");
+    }
+    
+    
     
     
     //go through and launch all the threads
@@ -90,9 +102,23 @@ int main(int argc, char **argv) {
         int reps = 0;
         while(reps<100) {
             
-            //add 1 to A & 3 to B
-            a++;
+            //make sure only 1 thread can modify A at a time
+            sem_wait(&a_lock);
+            
+            a++; //add 1 to A 
+            
+            //unlock A so another thread can modify it
+            sem_post(&a_lock);
+            
+            
+            //make sure only 1 thread can modify B at a time
+            sem_wait(&b_lock);
+            
+            //add 3 to B
             b+=3;
+            
+            //unlock B so another thread can modify it
+            sem_post(&b_lock);
             
             //sleep for a random amount of time (btwn 0-100 micro-seconds)
             usleep(rand() % (100 + 1));
@@ -118,9 +144,24 @@ int main(int argc, char **argv) {
         int reps = 0;
         while(reps<100) {
             
-            //add 3 to B and 1 to A
-            b+=3;
-            a++;
+            //make sure only 1 thread can modify B at a time
+            sem_wait(&b_lock);
+            
+            
+            b+=3; //add 3 to B
+            
+            //unlock A so another thread can modify it
+            sem_post(&b_lock);
+            
+            
+            //make sure only 1 thread can modify A at a time
+            sem_wait(&a_lock);
+            
+            a++; //add 1 to A
+            
+            //unlock A so another thread can modify it
+            sem_post(&a_lock);
+            
             
             //sleep for a random amount of time (btwn 0-100 micro-seconds)
             usleep(rand() % (100 + 1));
