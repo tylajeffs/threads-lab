@@ -63,79 +63,7 @@ int main(int argc, char **argv) {
     if(sem_init(&empty_slots,0,BUFFER_SIZE) < 0) {
         perror("Error initializing empty_slots");
     }
-    
-    
-    
-    /**
-    
-    //PRODUCER
-    for(int i = 0; i<2; i++) {
-        
-        //produce a number 
-        int item = rand() % (100 + 1);
-        printf("Random number: %d \n",item);
-        
-        //wait until there is an empty slot in the buffer
-        sem_wait(&empty_slots);
-        
-        //wait until we can read/write to the buffer
-        sem_wait(&buf_sem);
-        
-        //produce
-        //x = n; 
-        buffer[index_to_write] = item;
-        index_to_write = (index_to_write + 1)%BUFFER_SIZE; //increment the index
-        
-        //signal that the buffer is open to be read/modified now
-        sem_post(&buf_sem);
-        //signal that the number of items in the buffer has increased
-        sem_post(&items_in_buf);
-        
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-   //add the random number to the end of the 
-    
-    
-    
-    //CONSUMER
-    for(int i=0; i<2; i++) {
-        
-        //wait until there are items in the buffer
-        sem_wait(&items_in_buf);
-        //wait until the buffer is open to read/write
-        sem_wait(&buf_sem);
-        
-        //take the first item
-        //int con = x;
-        int items = buffer[index_to_take];
-        index_to_take = (index_to_take + 1) % BUFFER_SIZE;
-        
-        
-        
-        //signal that the buffer is open to be read/modified now
-        sem_post(&buf_sem);
-        //signal that the buffer now has an empty slot
-        sem_post(&empty_slots);
-        
-        //consume
-        printf("Consumed %d \n",items);
-        
-    }
-    
-    
-    
-    
-    **/
-    
+
     
     
     
@@ -225,7 +153,7 @@ int main(int argc, char **argv) {
             
             //produce a random number 
             int item = rand() % (100 + 1);
-            printf("Random number: %d \n",item);
+            printf("Producer %d: produced %d \n",t_id,item);
             
             //wait until there is an empty slot in the buffer
             sem_wait(&empty_slots);
@@ -308,7 +236,7 @@ int main(int argc, char **argv) {
             sem_post(&empty_slots);
             
             //consume
-            printf("Consumed %d \n",item);
+            printf("Consumer %d: consumed %d \n",t_id,item);
         }
         
     }
